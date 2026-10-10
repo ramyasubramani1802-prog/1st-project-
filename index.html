@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Soulkadi — Custom Fidget Clickers, Mini Albums & Quirky Keychains</title>
+  <meta name="description" content="Studio Soulkadi crafts custom fidget interlocking clickers, mini photo album keychains, and handcrafted quirky accessories. Shipping PAN India. Where imagination finds form." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== CART OVERLAY ===================== -->
+  <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+
+  <!-- ===================== CART DRAWER ===================== -->
+  <aside id="cart-drawer" class="cart-drawer" role="complementary" aria-label="Shopping Cart">
+    <div class="cart-header">
+      <h2 class="cart-title">🛍️ Your Cart</h2>
+      <button id="close-cart-btn" class="cart-close-btn" aria-label="Close cart">✕</button>
+    </div>
+
+    <!-- Free Shipping Progress -->
+    <div class="free-shipping-bar">
+      <div class="free-shipping-text">
+        <span id="shipping-msg">Add <strong id="shipping-remaining">₹500</strong> more for free shipping! 🚚</span>
+      </div>
+      <div class="shipping-progress-track">
+        <div id="shipping-progress" class="shipping-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Cart Items -->
+    <div id="cart-items-container" class="cart-items-container">
+      <div class="cart-empty" id="cart-empty-state">
+        <div class="cart-empty-icon">🛒</div>
+        <p>Your cart is empty!</p>
+        <p class="cart-empty-sub">Add some quirky goodies ✨</p>
+      </div>
+    </div>
+
+    <!-- Coupon Code -->
+    <div class="coupon-section">
+      <div class="coupon-input-wrap">
+        <input type="text" id="coupon-input" placeholder="Enter coupon code" class="coupon-input" />
+        <button id="apply-coupon-btn" class="apply-coupon-btn">Apply</button>
+      </div>
+      <p id="coupon-msg" class="coupon-msg"></p>
+    </div>
+
+    <!-- Cart Footer -->
+    <div class="cart-footer" id="cart-footer">
+      <div class="cart-subtotal">
+        <span>Subtotal</span>
+        <span id="cart-subtotal-amount">₹0</span>
+      </div>
+      <div class="cart-discount" id="cart-discount-row" style="display:none">
+        <span>Discount 🎉</span>
+        <span id="cart-discount-amount" class="discount-text">-₹0</span>
+      </div>
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-amount">₹0</span>
+      </div>
+      <button class="checkout-btn" id="checkout-btn">Proceed to Checkout →</button>
+      <p class="cart-note">🔒 Secure Checkout · PAN India Delivery</p>
+    </div>
+  </aside>
+
+  <!-- ===================== STICKY NAVBAR ===================== -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner container">
+      <!-- Logo -->
+      <a href="#home" class="nav-logo" aria-label="Studio Soulkadi Home">
+        <span class="logo-icon">✦</span>
+        <span class="logo-text">Studio <em>Soulkadi</em></span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="#home" class="nav-link active" id="nav-home">Home</a>
+        <a href="#shop" class="nav-link" id="nav-shop">Shop All</a>
+        <a href="#clickers" class="nav-link" id="nav-clickers">Custom Clickers</a>
+        <a href="#albums" class="nav-link" id="nav-albums">Mini Albums</a>
+        <a href="#reviews" class="nav-link" id="nav-reviews">Reviews</a>
+        <a href="#about" class="nav-link" id="nav-about">About</a>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <button class="nav-search-btn" id="search-toggle-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="nav-icon-btn wishlist-btn" id="wishlist-btn" aria-label="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="wishlist-badge" id="wishlist-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-icon-btn cart-btn" id="open-cart-btn" aria-label="Open shopping cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+        </button>
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle mobile menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar Dropdown -->
+    <div class="search-dropdown" id="search-dropdown" aria-hidden="true">
+      <div class="container">
+        <input type="search" id="search-input" placeholder="Search for clickers, albums, keychains…" class="search-field" aria-label="Search products" />
+        <div class="search-suggestions" id="search-suggestions"></div>
+      </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <a href="#home" class="mobile-nav-link">Home</a>
+      <a href="#shop" class="mobile-nav-link">Shop All</a>
+      <a href="#clickers" class="mobile-nav-link">Custom Clickers</a>
+      <a href="#albums" class="mobile-nav-link">Mini Albums</a>
+      <a href="#reviews" class="mobile-nav-link">Reviews</a>
+      <a href="#about" class="mobile-nav-link">About</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HERO SECTION ===================== -->
+    <section class="hero" id="home">
+      <div class="hero-bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+      </div>
+
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge-wrap">
+            <span class="hero-badge floating-badge">🇮🇳 Shipping PAN India</span>
+          </div>
+          <p class="hero-eyebrow">Handcrafted with ♡ in India</p>
+          <h1 class="hero-headline">
+            Everyday Quirks<br/>
+            <span class="headline-accent">Brought to Life</span>
+          </h1>
+          <p class="hero-tagline">Where imagination finds form — Custom, Functional, Everyday Quirks</p>
+          <div class="hero-cta-group">
+            <a href="#shop" class="btn btn-primary">Shop Collection ✦</a>
+            <a href="#customizer" class="btn btn-secondary">Customize Yours 🎨</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-num">500+</span>
+              <span class="stat-label">Happy Customers</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-num">100%</span>
+              <span class="stat-label">Handcrafted</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-num">4.9★</span>
+              <span class="stat-label">Avg. Rating</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-image-frame">
+            <img src="assets/hero_banner.png" alt="Studio Soulkadi collection of colorful handcrafted quirky items" class="hero-img" fetchpriority="high" />
+            <div class="hero-float-tag tag-1">✨ Custom Name Clickers</div>
+            <div class="hero-float-tag tag-2">📷 Mini Photo Albums</div>
+            <div class="hero-float-tag tag-3">🎀 Keychains & More</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="scroll-indicator">
+        <span>Scroll to explore</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MARQUEE STRIP ===================== -->
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-track">
+        <span>✦ Custom Fidget Clickers</span>
+        <span>✦ Mini Photo Albums</span>
+        <span>✦ Name Keychains</span>
+        <span>✦ Kawaii Accessories</span>
+        <span>✦ PAN India Delivery</span>
+        <span>✦ 100% Handcrafted</span>
+        <span>✦ Custom Fidget Clickers</span>
+        <span>✦ Mini Photo Albums</span>
+        <span>✦ Name Keychains</span>
+        <span>✦ Kawaii Accessories</span>
+        <span>✦ PAN India Delivery</span>
+        <span>✦ 100% Handcrafted</span>
+      </div>
+    </div>
+
+    <!-- ===================== CATEGORIES ===================== -->
+    <section class="categories-section" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Browse by vibe</p>
+          <h2 class="section-title">Shop Our Collections</h2>
+          <p class="section-sub">Every piece is made with love and a sprinkle of magic ✨</p>
+        </div>
+
+        <div class="categories-grid">
+          <a href="#clickers" class="category-card cat-clickers">
+            <div class="cat-icon">🖱️</div>
+            <h3>Custom Clickers</h3>
+            <p>Honeycomb · Boxy · Standard · Interlocking</p>
+            <span class="cat-cta">Shop Now →</span>
+          </a>
+          <a href="#albums" class="category-card cat-albums">
+            <div class="cat-icon">📷</div>
+            <h3>Mini Photo Albums</h3>
+            <p>Keychain-size · Daisy · Bow accents</p>
+            <span class="cat-cta">Shop Now →</span>
+          </a>
+          <a href="#keepsakes" class="category-card cat-keepsakes">
+            <div class="cat-icon">🎀</div>
+            <h3>Customized Keepsakes</h3>
+            <p>Name keychains · Quirky accessories</p>
+            <span class="cat-cta">Shop Now →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FEATURED PRODUCTS (SHOP) ===================== -->
+    <section class="shop-section" id="shop">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Trending now</p>
+          <h2 class="section-title">Shop All Products</h2>
+          <p class="section-sub">Pick your favourite — or let us help you build your own! 🎨</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" role="tablist" aria-label="Product filters">
+          <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true" id="tab-all">All</button>
+          <button class="filter-tab" data-filter="clicker" role="tab" aria-selected="false" id="tab-clicker">Clickers</button>
+          <button class="filter-tab" data-filter="album" role="tab" aria-selected="false" id="tab-album">Mini Albums</button>
+          <button class="filter-tab" data-filter="keepsake" role="tab" aria-selected="false" id="tab-keepsake">Keepsakes</button>
+        </div>
+
+        <div class="products-grid" id="products-grid">
+          <!-- Product cards injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CUSTOM CLICKERS ===================== -->
+    <section class="clickers-section" id="clickers">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Best seller</p>
+          <h2 class="section-title">Custom Fidget Clickers</h2>
+          <p class="section-sub">Satisfying to click, beautiful to look at — and completely yours 💖</p>
+        </div>
+
+        <div class="clicker-styles-grid">
+          <div class="clicker-style-card reveal">
+            <img src="assets/clicker_product.png" alt="Interlocking fidget clicker keychains with custom names in pastel colors" class="clicker-img" loading="lazy"/>
+            <div class="clicker-style-info">
+              <span class="style-badge">Most Popular</span>
+              <h3>Interlocking Clicker</h3>
+              <p>The classic! Satisfying interlocking mechanism with colorful letter tiles. Enter any name or word!</p>
+              <div class="clicker-price">Starting from <strong>₹299</strong></div>
+              <button class="btn btn-primary btn-sm" data-product-id="1">Add to Cart</button>
+            </div>
+          </div>
+
+          <div class="clicker-style-card reveal">
+            <img src="assets/honeycomb_clicker.png" alt="Honeycomb style fidget clicker with hexagonal letter tiles" class="clicker-img" loading="lazy"/>
+            <div class="clicker-style-info">
+              <span class="style-badge style-new">New</span>
+              <h3>Honeycomb Clicker</h3>
+              <p>Hexagonal honeycomb design — ultra satisfying to click, with a unique geometric look.</p>
+              <div class="clicker-price">Starting from <strong>₹349</strong></div>
+              <button class="btn btn-primary btn-sm" data-product-id="3">Add to Cart</button>
+            </div>
+          </div>
+
+          <div class="clicker-style-card reveal">
+            <img src="assets/boxy_clicker.png" alt="Boxy style fidget clicker with bold colorful letter tiles" class="clicker-img" loading="lazy"/>
+            <div class="clicker-style-info">
+              <span class="style-badge style-sale">Sale</span>
+              <h3>Boxy Clicker</h3>
+              <p>Chunky, bold, and oh-so-satisfying. The boxy design gives a premium tactile feel.</p>
+              <div class="clicker-price"><s class="price-old">₹399</s> <strong>₹329</strong></div>
+              <button class="btn btn-primary btn-sm" data-product-id="4">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LIVE CUSTOMIZER ===================== -->
+    <section class="customizer-section" id="customizer">
+      <div class="customizer-bg-blob"></div>
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">✨ Interactive Tool</p>
+          <h2 class="section-title">Build Your Own Clicker</h2>
+          <p class="section-sub">Design your perfect clicker right here — see it come to life instantly!</p>
+        </div>
+
+        <div class="customizer-layout">
+          <!-- Preview -->
+          <div class="customizer-preview-panel">
+            <div class="preview-card">
+              <div class="preview-label">Live Preview</div>
+              <div class="preview-clicker" id="preview-clicker">
+                <div class="preview-tiles" id="preview-tiles">
+                  <div class="preview-tile" style="background:#FFB3C6">S</div>
+                  <div class="preview-tile" style="background:#A2C2E8">O</div>
+                  <div class="preview-tile" style="background:#B5EAD7">U</div>
+                  <div class="preview-tile" style="background:#C7B8EA">L</div>
+                </div>
+                <div class="preview-base" id="preview-base"></div>
+              </div>
+              <div class="preview-price-note">Price calculated at checkout based on letter count</div>
+            </div>
+            <button class="btn btn-primary btn-lg" id="add-custom-to-cart">Add Custom Clicker to Cart 🛒</button>
+          </div>
+
+          <!-- Controls -->
+          <div class="customizer-controls">
+            <!-- Step 1: Text -->
+            <div class="control-group">
+              <label class="control-label" for="custom-text-input">
+                <span class="step-num">01</span> Enter your name / word
+              </label>
+              <input
+                type="text"
+                id="custom-text-input"
+                class="custom-text-input"
+                placeholder="e.g. SOULKADI"
+                maxlength="12"
+                aria-describedby="char-count"
+              />
+              <div class="input-meta">
+                <span id="char-count" class="char-count">8 / 12 characters</span>
+                <span class="input-hint">Max 12 letters</span>
+              </div>
+            </div>
+
+            <!-- Step 2: Style -->
+            <div class="control-group">
+              <label class="control-label">
+                <span class="step-num">02</span> Choose style
+              </label>
+              <div class="style-picker" role="radiogroup" aria-label="Clicker style">
+                <label class="style-option selected" id="style-interlocking">
+                  <input type="radio" name="clicker-style" value="interlocking" checked />
+                  <span class="style-icon">🔗</span>
+                  <span>Interlocking</span>
+                </label>
+                <label class="style-option" id="style-honeycomb">
+                  <input type="radio" name="clicker-style" value="honeycomb" />
+                  <span class="style-icon">🍯</span>
+                  <span>Honeycomb</span>
+                </label>
+                <label class="style-option" id="style-boxy">
+                  <input type="radio" name="clicker-style" value="boxy" />
+                  <span class="style-icon">⬜</span>
+                  <span>Boxy</span>
+                </label>
+                <label class="style-option" id="style-standard">
+                  <input type="radio" name="clicker-style" value="standard" />
+                  <span class="style-icon">📦</span>
+                  <span>Standard</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 3: Color Theme -->
+            <div class="control-group">
+              <label class="control-label">
+                <span class="step-num">03</span> Choose colour theme
+              </label>
+              <div class="color-picker" role="radiogroup" aria-label="Color theme">
+                <label class="color-swatch selected" title="Pastel Rainbow" id="color-rainbow">
+                  <input type="radio" name="color-theme" value="rainbow" checked />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #FFB3C6, #A2C2E8, #B5EAD7, #FDFD96)"></span>
+                  <span>Rainbow</span>
+                </label>
+                <label class="color-swatch" title="Berry Pink" id="color-pink">
+                  <input type="radio" name="color-theme" value="pink" />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #D13B7B, #FFB3C6)"></span>
+                  <span>Berry Pink</span>
+                </label>
+                <label class="color-swatch" title="Ocean Blue" id="color-blue">
+                  <input type="radio" name="color-theme" value="blue" />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #4A90D9, #A2C2E8)"></span>
+                  <span>Ocean</span>
+                </label>
+                <label class="color-swatch" title="Mint Green" id="color-mint">
+                  <input type="radio" name="color-theme" value="mint" />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #3CBFAE, #B5EAD7)"></span>
+                  <span>Mint</span>
+                </label>
+                <label class="color-swatch" title="Lavender" id="color-lavender">
+                  <input type="radio" name="color-theme" value="lavender" />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #9B72CF, #C7B8EA)"></span>
+                  <span>Lavender</span>
+                </label>
+                <label class="color-swatch" title="Sunny Yellow" id="color-yellow">
+                  <input type="radio" name="color-theme" value="yellow" />
+                  <span class="swatch-dot" style="background: linear-gradient(135deg, #F6C90E, #FDFD96)"></span>
+                  <span>Sunny</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 4: Base Color -->
+            <div class="control-group">
+              <label class="control-label">
+                <span class="step-num">04</span> Base colour
+              </label>
+              <div class="base-picker" role="radiogroup" aria-label="Base color">
+                <label class="base-option selected" id="base-white">
+                  <input type="radio" name="base-color" value="white" checked />
+                  <span class="base-dot" style="background:#FFFFFF; border:2px solid #ddd"></span>
+                  <span>White</span>
+                </label>
+                <label class="base-option" id="base-black">
+                  <input type="radio" name="base-color" value="black" />
+                  <span class="base-dot" style="background:#222222"></span>
+                  <span>Black</span>
+                </label>
+                <label class="base-option" id="base-pink">
+                  <input type="radio" name="base-color" value="babyPink" />
+                  <span class="base-dot" style="background:#FFB3C6"></span>
+                  <span>Baby Pink</span>
+                </label>
+                <label class="base-option" id="base-mint">
+                  <input type="radio" name="base-color" value="mint" />
+                  <span class="base-dot" style="background:#B5EAD7"></span>
+                  <span>Mint</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="customizer-note">
+              💬 After adding to cart, our team will reach out on WhatsApp to confirm your custom design!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== MINI ALBUMS ===================== -->
+    <section class="albums-section" id="albums">
+      <div class="container">
+        <div class="albums-layout">
+          <div class="albums-image-side reveal">
+            <img src="assets/mini_album_product.png" alt="Cute mini photo album keychain with daisy flowers and pink bow" class="albums-hero-img" loading="lazy"/>
+            <div class="albums-float-badge">📷 Holds mini memories!</div>
+          </div>
+          <div class="albums-content-side">
+            <p class="section-eyebrow">Fan favourite ♡</p>
+            <h2 class="section-title">Mini Photo Albums</h2>
+            <p class="albums-desc">
+              Carry your favourite memories wherever you go! Our mini album keychains are the cutest way to keep your photos close. Each album holds 6–8 mini photos and comes with adorable daisy or bow accents.
+            </p>
+            <ul class="albums-features">
+              <li>📸 Holds 6–8 mini photos</li>
+              <li>🌼 Available in Daisy & Bow styles</li>
+              <li>🎨 Multiple pastel colour options</li>
+              <li>🔑 Durable keychain attachment</li>
+              <li>🎁 Perfect gifting item!</li>
+            </ul>
+            <div class="albums-price-cta">
+              <div class="product-price-big">Starting from <strong>₹249</strong></div>
+              <button class="btn btn-primary" data-product-id="2">Add to Cart 🛒</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ACCESSORIES / KEEPSAKES ===================== -->
+    <section class="keepsakes-section" id="keepsakes">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Quirky & cute</p>
+          <h2 class="section-title">Customized Keepsakes</h2>
+          <p class="section-sub">From kawaii bookmarks to name tags — there's something for every vibe 🌈</p>
+        </div>
+        <div class="keepsakes-grid">
+          <div class="keepsake-item reveal">
+            <img src="assets/accessories_product.png" alt="Collection of quirky kawaii accessories and name keychains" class="keepsake-img" loading="lazy"/>
+            <h3>Custom Keepsakes</h3>
+            <p>Name keychains, bookmarks, boba clickers & more</p>
+            <button class="btn btn-outline btn-sm" data-product-id="5">Shop Keepsakes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TESTIMONIALS / REVIEWS ===================== -->
+    <section class="reviews-section" id="reviews">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">They loved it ♡</p>
+          <h2 class="section-title">Happy Customers</h2>
+          <p class="section-sub">Real reviews from real quirky humans 💬</p>
+        </div>
+
+        <div class="reviews-grid">
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"I ordered a custom interlocking clicker with my name and it arrived so beautifully packaged! The colours are exactly as shown. I'm literally addicted to clicking it 😭💗"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#FFB3C6">P</div>
+              <div>
+                <strong>Priya S.</strong>
+                <span class="author-location">Mumbai</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Got the mini album keychain as a gift for my bestie and she CRIED. It's the most adorable thing I've ever seen! Packaging was super cute too 🌼"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#A2C2E8">R</div>
+              <div>
+                <strong>Ritika M.</strong>
+                <span class="author-location">Delhi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Ordered the honeycomb clicker for my daughter — she takes it everywhere! Amazing quality, super satisfying to use. Will definitely order more. Thank you Studio Soulkadi! 🍯"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#B5EAD7">A</div>
+              <div>
+                <strong>Ananya K.</strong>
+                <span class="author-location">Bangalore</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"The customization process was so easy! They confirmed my order on WhatsApp within minutes. Delivery was fast and the clicker looks exactly like the preview 🥺✨"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#C7B8EA">S</div>
+              <div>
+                <strong>Sneha T.</strong>
+                <span class="author-location">Pune</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Bought the boxy clicker set for myself and two friends — we all got matching ones with our initials! The quality is insane for the price. 10/10 recommend 💫"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#FDFD96; color:#555">T</div>
+              <div>
+                <strong>Tanvi R.</strong>
+                <span class="author-location">Chennai</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card reveal">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">"Honestly Studio Soulkadi deserves all the love! The packaging has these cute little details, the product is perfect, and the response time is incredible. Already planning my next order! 🎀"</p>
+            <div class="review-author">
+              <div class="author-avatar" style="background:#FFD6E0">N</div>
+              <div>
+                <strong>Nisha V.</strong>
+                <span class="author-location">Hyderabad</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer photo highlight -->
+        <div class="customer-photo-highlight">
+          <h3 class="instagram-title">As Seen on Instagram <a href="https://instagram.com/_studio_soulkadi_" target="_blank" rel="noopener" class="insta-handle">@_studio_soulkadi_</a></h3>
+          <div class="insta-grid">
+            <div class="insta-item reveal">
+              <img src="assets/instagram_grid.png" alt="Instagram collage of Studio Soulkadi kawaii products" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+            <div class="insta-item reveal">
+              <img src="assets/clicker_product.png" alt="Custom name clicker keychains" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+            <div class="insta-item reveal">
+              <img src="assets/mini_album_product.png" alt="Mini photo album keychain" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+            <div class="insta-item reveal">
+              <img src="assets/accessories_product.png" alt="Kawaii accessories collection" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+            <div class="insta-item reveal">
+              <img src="assets/honeycomb_clicker.png" alt="Honeycomb clicker with custom name" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+            <div class="insta-item reveal">
+              <img src="assets/boxy_clicker.png" alt="Boxy clicker with rainbow letters" loading="lazy"/>
+              <div class="insta-overlay">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </div>
+            </div>
+          </div>
+          <a href="https://instagram.com/_studio_soulkadi_" target="_blank" rel="noopener" class="btn btn-outline insta-follow-btn">
+            Follow @_studio_soulkadi_ on Instagram ♡
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="about-section" id="about">
+      <div class="about-bg"></div>
+      <div class="container about-inner">
+        <div class="about-content reveal">
+          <p class="section-eyebrow">Our story</p>
+          <h2 class="section-title">About Studio Soulkadi</h2>
+          <p class="about-text">
+            Studio Soulkadi was born from a simple love — the joy of making something beautiful with your hands and putting a smile on someone's face. What started as a hobby of crafting tiny, satisfying fidget clickers grew into a full creative studio dedicated to handcrafted, functional, and completely quirky items.
+          </p>
+          <p class="about-text">
+            Every item we create is 100% handcrafted with love, from the careful assembly of each letter tile to the thoughtful packaging we send your order in. We believe everyday objects should bring you joy — and that's exactly what we pour into every single piece.
+          </p>
+          <div class="about-values">
+            <div class="value-item">
+              <span class="value-icon">🤲</span>
+              <span>100% Handcrafted</span>
+            </div>
+            <div class="value-item">
+              <span class="value-icon">🎨</span>
+              <span>Fully Customizable</span>
+            </div>
+            <div class="value-item">
+              <span class="value-icon">🚚</span>
+              <span>PAN India Shipping</span>
+            </div>
+            <div class="value-item">
+              <span class="value-icon">💬</span>
+              <span>WhatsApp Support</span>
+            </div>
+          </div>
+          <div class="about-cta-group">
+            <a href="https://instagram.com/_studio_soulkadi_" target="_blank" rel="noopener" class="btn btn-primary">Follow on Instagram</a>
+            <a href="https://wa.me/919999999999?text=Hi!%20I%20want%20to%20place%20a%20custom%20order%20with%20Studio%20Soulkadi%20🌸" target="_blank" rel="noopener" class="btn btn-whatsapp">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+        <div class="about-image-side reveal">
+          <img src="assets/customer_review_1.png" alt="Happy Studio Soulkadi customer" class="about-img" loading="lazy"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== NEWSLETTER ===================== -->
+    <section class="newsletter-section" id="newsletter">
+      <div class="container">
+        <div class="newsletter-card">
+          <div class="newsletter-content">
+            <div class="newsletter-emoji">🎉</div>
+            <h2>Get 10% Off Your First Order!</h2>
+            <p>Subscribe to our newsletter for exclusive deals, new launches, and behind-the-scenes studio magic.</p>
+            <form class="newsletter-form" id="newsletter-form" novalidate>
+              <input type="email" id="newsletter-email" placeholder="Your email address" class="newsletter-input" required aria-label="Email address" />
+              <button type="submit" class="btn btn-primary newsletter-btn">Subscribe ✦</button>
+            </form>
+            <p class="newsletter-fine">No spam, ever. Unsubscribe anytime 💖</p>
+          </div>
+          <div class="newsletter-deco" aria-hidden="true">
+            <span>✨</span><span>🌸</span><span>🎀</span><span>⭐</span><span>💖</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand col -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-icon">✦</span>
+            <span class="logo-text">Studio <em>Soulkadi</em></span>
+          </div>
+          <p class="footer-tagline">Where imagination finds form — Custom, Functional, Everyday Quirks</p>
+          <div class="footer-social">
+            <a href="https://instagram.com/_studio_soulkadi_" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://wa.me/919999999999?text=Hi!%20I'd%20love%20to%20order%20from%20Studio%20Soulkadi%20🌸" target="_blank" rel="noopener" class="social-link whatsapp-link" aria-label="WhatsApp">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#shop">Shop All</a></li>
+            <li><a href="#clickers">Custom Clickers</a></li>
+            <li><a href="#albums">Mini Albums</a></li>
+            <li><a href="#customizer">Build Your Own</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#about">About Us</a></li>
+          </ul>
+        </div>
+
+        <!-- Shipping info -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Shipping & Delivery</h4>
+          <ul class="footer-links">
+            <li>🚚 PAN India delivery available</li>
+            <li>⏱️ Dispatch within 3–5 working days</li>
+            <li>📦 Custom orders: 5–7 working days</li>
+            <li>🔒 Securely packaged with love</li>
+            <li>🆓 Free shipping above ₹500</li>
+          </ul>
+        </div>
+
+        <!-- FAQs -->
+        <div class="footer-col">
+          <h4 class="footer-heading">FAQs</h4>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Can I customize any product?</summary>
+              <p>Yes! Most products are fully customizable. Use our live customizer or DM us on Instagram/WhatsApp.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What is your return policy?</summary>
+              <p>Since all items are custom-made, we do not accept returns unless the item is damaged. Contact us within 48 hours of delivery.</p>
+            </details>
+            <details class="faq-item">
+              <summary>How long does delivery take?</summary>
+              <p>Standard items: 3–5 working days. Custom orders: 5–7 working days after confirmation.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Do you take bulk/gifting orders?</summary>
+              <p>Absolutely! We love bulk orders for birthdays, corporate gifting, and events. WhatsApp us for special pricing.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2024 Studio Soulkadi · Made with 💖 in India · All rights reserved</p>
+        <p class="footer-bottom-links">
+          <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- WhatsApp Float Button -->
+  <a href="https://wa.me/919999999999?text=Hi!%20I'd%20love%20to%20order%20from%20Studio%20Soulkadi%20🌸" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+    <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    <span class="wa-label">Order on WhatsApp</span>
+  </a>
+
+  <script src="script.js"></script>
+</body>
+</html>
